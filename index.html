@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>个人简介 - 独立开发者</title>
+  <!-- 这里已经帮你改成了“股票记录” -->
+  <title>股票记录 - 厍思宁的个人主页</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -24,22 +25,20 @@
     <section id="home" class="hero">
       <div class="container hero-content">
         <div class="hero-text">
-          <!-- 这里改成了你的名字 -->
           <h1>你好，我是<span class="highlight">厍思宁</span></h1>
           
           <div class="hero-avatar">
-            <!-- 确保你的图片名是这个，如果不是请自行修改 -->
             <img src="1767246246813.jpg" alt="厍思宁" class="avatar-image" />
           </div>
 
           <!-- 天气组件 -->
           <div class="weather-widget" id="weatherWidget">
-            <div class="weather-loading">加载天气中...</div>
+            <div class="weather-loading">正在获取天气...</div>
           </div>
 
           <!-- 股票组件 -->
           <div class="stocks-container" id="stocksContainer">
-            <div class="stock-loading">加载数据中...</div>
+            <div class="stock-loading">正在获取行情...</div>
           </div>
         </div>
       </div>
@@ -53,18 +52,14 @@
   </footer>
 
   <script>
-    // 1. 自动更新年份
+    // 1. 年份和导航逻辑
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // 2. 手机端导航逻辑
     const navToggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('.nav');
-
     navToggle.addEventListener('click', () => {
       nav.classList.toggle('nav-open');
       navToggle.classList.toggle('nav-toggle-open');
     });
-
     nav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         nav.classList.remove('nav-open');
@@ -72,138 +67,128 @@
       });
     });
 
-    // 3. 股票配置清单 (已添加你要求的两个ETF)
-    // 规则：上海交易所加 sh，深圳交易所加 sz
+    // 2. 股票列表
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF' },
       { code: 'sh601288', name: '农业银行' },
       { code: 'sh601919', name: '中远海控' },
       { code: 'sh512690', name: '酒ETF' },
-      { code: 'sh513050', name: '513050 中概互联ETF' }, // 新增
-      { code: 'sz159567', name: '159567 黄金股ETF' }   // 新增
+      { code: 'sh513050', name: '513050 中概互联ETF' },
+      { code: 'sz159567', name: '159567 黄金股ETF' }
     ];
     
-    // 获取单只股票数据 (腾讯接口)
+    // 股票接口逻辑 (保持不变)
     function fetchStockData(stockCode) {
       return new Promise((resolve) => {
         const varName = `v_${stockCode}`;
-        
         const script = document.createElement('script');
         script.charset = 'gb2312';
         script.src = `https://qt.gtimg.cn/q=${stockCode}`;
-        
         script.onload = () => {
-          // 这里的延迟是为了等待全局变量赋值完成
           setTimeout(() => {
             try {
               const globalVar = window[varName];
               if (globalVar) {
                 const data = globalVar.split('~');
-                // 简单的防错检查
                 if (data.length > 3) {
                   const stockConfig = STOCKS.find(s => s.code === stockCode);
                   const name = stockConfig ? stockConfig.name : data[1];
-                  
                   const currentPrice = parseFloat(data[3]);
                   const yesterdayClose = parseFloat(data[4]);
                   const todayOpen = parseFloat(data[5]);
                   const high = parseFloat(data[33]);
                   const low = parseFloat(data[34]);
-
-                  // 价格修正逻辑：如果停牌或未开盘，保持数据合理性
                   const price = currentPrice > 0 ? currentPrice : yesterdayClose;
                   const change = price - yesterdayClose;
                   const changePercent = yesterdayClose > 0 ? ((change / yesterdayClose) * 100).toFixed(2) : '0.00';
                   
-                  // 清理内存
                   script.remove();
                   delete window[varName];
-
                   resolve({
-                    name,
-                    price: price.toFixed(3), // 保留3位小数更精确
-                    change: change.toFixed(3),
-                    percent: changePercent,
-                    isUp: change >= 0,
-                    open: todayOpen.toFixed(2),
-                    high: high.toFixed(2),
-                    low: low.toFixed(2)
+                    name, price: price.toFixed(3), change: change.toFixed(3),
+                    percent: changePercent, isUp: change >= 0,
+                    open: todayOpen.toFixed(2), high: high.toFixed(2), low: low.toFixed(2)
                   });
                   return;
                 }
               }
             } catch (e) { }
-            script.remove();
-            resolve(null);
+            script.remove(); resolve(null);
           }, 100);
         };
-        
         script.onerror = () => { script.remove(); resolve(null); };
         document.head.appendChild(script);
       });
     }
     
-    // 渲染股票列表
     async function fetchStocks() {
       const container = document.getElementById('stocksContainer');
       const results = await Promise.all(STOCKS.map(s => fetchStockData(s.code)));
-      
       let html = '';
       results.forEach((data, index) => {
         if (data) {
-          // 涨跌颜色类名
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
-          
           html += `
             <div class="stock-widget">
-              <div class="stock-name-row">
-                <span class="stock-name">📈 ${data.name}</span>
-              </div>
+              <div class="stock-name-row"><span class="stock-name">📈 ${data.name}</span></div>
               <div class="stock-info">
                 <span class="stock-price ${colorClass}">${data.price}</span>
                 <span class="stock-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</span>
                 <span class="stock-detail">今开${data.open} | 高${data.high} | 低${data.low}</span>
               </div>
-            </div>
-          `;
+            </div>`;
         } else {
-          // 如果加载失败，保留名字占位
           html += `<div class="stock-widget"><div class="stock-info"><span class="stock-name">${STOCKS[index].name}</span><span class="stock-error">暂无数据</span></div></div>`;
         }
       });
       container.innerHTML = html;
     }
 
-    // 4. 天气逻辑 (精简版)
+    // 3. 全新极速天气逻辑 (Open-Meteo)
     async function fetchWeather() {
       const widget = document.getElementById('weatherWidget');
       try {
-        const response = await fetch('https://wttr.in/沈阳?format=j1&lang=zh');
+        // 请求沈阳的实时天气 (lat=41.8, lon=123.4)
+        const response = await fetch(
+          'https://api.open-meteo.com/v1/forecast?latitude=41.80&longitude=123.43&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FShanghai'
+        );
         const data = await response.json();
-        const current = data.current_condition[0];
         
-        widget.innerHTML = `
-          <div class="weather-info">
-            <span class="weather-location">📍 沈阳</span>
-            <span class="weather-temp">${current.temp_C}°C</span>
-            <span class="weather-desc">${current.lang_zh[0].value}</span>
-            <span class="weather-humidity">湿度 ${current.humidity}%</span>
-          </div>
-        `;
+        if (data && data.current) {
+          const temp = data.current.temperature_2m;
+          const humidity = data.current.relative_humidity_2m;
+          const code = data.current.weather_code;
+          
+          // 将天气代码转换为中文
+          let weatherText = "晴";
+          if (code === 0) weatherText = "晴";
+          else if (code >= 1 && code <= 3) weatherText = "多云";
+          else if (code >= 45 && code <= 48) weatherText = "雾";
+          else if (code >= 51 && code <= 67) weatherText = "雨";
+          else if (code >= 71 && code <= 77) weatherText = "雪";
+          else if (code >= 80 && code <= 82) weatherText = "阵雨";
+          else if (code >= 95) weatherText = "雷雨";
+          
+          widget.innerHTML = `
+            <div class="weather-info">
+              <span class="weather-location">📍 沈阳</span>
+              <span class="weather-temp">${temp}°C</span>
+              <span class="weather-desc">${weatherText}</span>
+              <span class="weather-humidity">湿度 ${humidity}%</span>
+            </div>
+          `;
+        }
       } catch (e) {
-        // 极简错误处理，静默失败或显示简单提示
-        widget.innerHTML = `<div class="weather-info"><span class="weather-location">📍 沈阳</span><span class="weather-desc">天气更新中...</span></div>`;
+        widget.innerHTML = `<div class="weather-info"><span class="weather-location">📍 沈阳</span><span class="weather-desc">加载失败</span></div>`;
       }
     }
 
-    // 初始化运行
+    // 4. 初始化和定时器
     fetchStocks();
     fetchWeather();
-    
-    // 定时刷新 (股票10秒刷一次，天气30分钟刷一次)
-    setInterval(fetchStocks, 10000); 
-    setInterval(fetchWeather, 1800000);
+    setInterval(fetchStocks, 10000); // 股票10秒
+    setInterval(fetchWeather, 600000); // 天气10分钟 (接口很快，但天气变化不需要那么频繁)
   </script>
 </body>
 </html>
