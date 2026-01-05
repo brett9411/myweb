@@ -17,7 +17,7 @@ body {
     "Microsoft YaHei", sans-serif;
   background-color: #050505;
   color: #f5f5f5;
-  line-height: 1.6;
+  line-height: 1.2; /* 缩小行高，让大字更紧凑 */
   -webkit-font-smoothing: antialiased;
 }
 
@@ -44,12 +44,7 @@ img {
   top: 0;
   z-index: 100;
   backdrop-filter: blur(18px);
-  background: linear-gradient(
-    180deg,
-    rgba(5, 5, 5, 0.96) 0%,
-    rgba(5, 5, 5, 0.9) 70%,
-    rgba(5, 5, 5, 0.75) 100%
-  );
+  background: rgba(5, 5, 5, 0.8);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -73,30 +68,8 @@ img {
   font-size: 14px;
 }
 
-.nav a {
-  position: relative;
-  padding-bottom: 4px;
-  color: #e5e5e5;
-  transition: color 0.2s ease;
-}
-
-.nav a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 1px;
-  background: #ffffff;
-  transition: width 0.2s ease;
-}
-
 .nav a:hover {
   color: #ffffff;
-}
-
-.nav a:hover::after {
-  width: 100%;
 }
 
 /* 手机端导航按钮 */
@@ -109,40 +82,13 @@ img {
   background: rgba(15, 15, 15, 0.8);
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 0;
   cursor: pointer;
 }
 
-.nav-toggle span {
-  display: block;
-  width: 16px;
-  height: 1px;
-  background: #ffffff;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.nav-toggle.nav-toggle-open span:first-child {
-  transform: translateY(1px) rotate(45deg);
-}
-
-.nav-toggle.nav-toggle-open span:last-child {
-  transform: translateY(-1px) rotate(-45deg);
-}
-
-/* Hero 区域 */
+/* Hero 区域 - 重点修改部分 */
 .hero {
-  padding: 80px 0 72px;
-  background: radial-gradient(
-      circle at top left,
-      rgba(255, 255, 255, 0.08),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgba(255, 255, 255, 0.06),
-      transparent 50%
-    );
+  padding: 100px 0 80px;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05), transparent 70%);
 }
 
 .hero-content {
@@ -150,90 +96,54 @@ img {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 32px;
-}
-
-.hero-avatar {
-  margin: 16px 0 20px;
-}
-
-.avatar-image {
-  max-width: 300px;
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  object-fit: contain;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  filter: grayscale(15%) contrast(1.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.avatar-image:hover {
-  transform: scale(1.01);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  gap: 40px;
 }
 
 .hero-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
 }
 
+/* 放大 2.5 倍后的标题文字 */
 .hero-text h1 {
-  margin: 0 0 12px;
-  font-size: clamp(32px, 5vw, 46px);
-  letter-spacing: 0.04em;
-  text-align: center;
+  margin: 0;
+  /* 使用 clamp 确保在大屏幕是 115px，在小屏幕会自动缩小防止溢出 */
+  font-size: clamp(40px, 12vw, 115px); 
+  font-weight: 800;
+  letter-spacing: -0.02em; /* 大字通常需要负缩进才好看 */
+  line-height: 1.1;
 }
 
-.hero-text .highlight {
-  margin-left: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  font-size: 0.8em;
-  text-transform: none;
-  letter-spacing: 0.12em;
-}
-
-/* --- 新增：图片姓名样式逻辑 --- */
+/* 图片姓名容器 */
 .hero-title-with-img {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 24px; /* 间距也随之放大 */
+  flex-wrap: wrap; /* 关键：空间不足时图片会自动换到下一行 */
 }
 
+/* 放大 2.5 倍后的图片 */
 .name-as-image {
-  height: 58px; /* 这里是 (46+80)/2 的优化中间值 */
+  height: clamp(60px, 15vw, 145px); /* 随屏幕缩放，最大 145px */
   width: auto;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  vertical-align: middle;
-  transition: transform 0.3s ease;
-  display: inline-block;
+  border-radius: 20px; /* 圆角也同步放大 */
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .name-as-image:hover {
-  transform: scale(1.05);
+  transform: scale(1.05) rotate(-2deg);
 }
 
-.eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: #a0a0a0;
-  margin-bottom: 8px;
+.hero-avatar {
+  margin-top: 20px;
 }
 
-.subtitle {
-  margin: 0 0 20px;
-  color: #c8c8c8;
-  font-size: 15px;
-  text-align: center;
+.avatar-image {
+  max-width: 350px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  filter: grayscale(20%);
 }
 
 /* 股票组件 */
@@ -241,177 +151,52 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
-  margin: 16px 0 24px;
+  margin-top: 40px;
 }
 
 .stock-widget {
   width: 100%;
   max-width: 800px;
-  padding: 14px 28px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 16px 32px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 }
 
-.stock-name-row {
-  width: 100%;
-  margin-bottom: 10px;
-  text-align: left;
-  overflow: visible;
-}
-
-.stock-name-row .stock-name {
-  display: block;
-  width: 100%;
-  font-size: 15px;
+.stock-name {
+  font-size: 16px;
   font-weight: 500;
-  color: #ffffff;
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  line-height: 1.4;
-}
-
-.stock-loading {
-  font-size: 13px;
-  color: #a0a0a0;
-  letter-spacing: 0.1em;
 }
 
 .stock-info {
   display: flex;
+  gap: 16px;
   align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: #e5e5e5;
-}
-
-.stock-name {
-  font-weight: 500;
-  color: #ffffff;
-  text-align: left;
+  margin-top: 8px;
 }
 
 .stock-price {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
 }
 
-.stock-up {
-  color: #f87171; /* 中国模式：红色表示上涨 */
-}
+.stock-up { color: #f87171; }
+.stock-down { color: #4ade80; }
 
-.stock-down {
-  color: #4ade80; /* 中国模式：绿色表示下跌 */
-}
-
-.stock-change {
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.stock-detail {
-  color: #a0a0a0;
-  font-size: 11px;
-}
-
-.stock-error {
-  color: #a0a0a0;
-  font-size: 12px;
-}
-
-.stock-error-message {
-  text-align: center;
-  color: #a0a0a0;
-  font-size: 12px;
-  margin-top: 8px;
-  padding: 8px;
-}
-
-/* 页脚 */
 .site-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: #050505;
-  padding: 18px 0 22px;
-}
-
-.footer-content {
-  font-size: 12px;
-  color: #8a8a8a;
+  padding: 40px 0;
   text-align: center;
+  font-size: 12px;
+  color: #666;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* 响应式处理 */
-@media (max-width: 900px) {
-  .avatar-image {
-    max-width: 240px;
-  }
-}
-
+/* 响应式调整 */
 @media (max-width: 720px) {
-  .nav {
-    position: fixed;
-    inset: 56px 20px auto 20px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: rgba(8, 8, 8, 0.96);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: space-around;
-    gap: 18px;
-    font-size: 13px;
-    transform: translateY(-120%);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  .nav.nav-open {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .nav-toggle {
-    display: inline-flex;
-  }
-
-  .hero {
-    padding-top: 56px;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-container {
-    padding-inline: 16px;
-  }
-
-  .container {
-    padding-inline: 16px;
-  }
-
-  .hero {
-    padding: 60px 0 56px;
-  }
-
-  .avatar-image {
-    max-width: 200px;
-  }
-
-  .name-as-image {
-    height: 42px; /* 手机端同步缩小比例 */
-  }
-
-  .stock-widget {
-    padding: 12px 20px;
-  }
-
-  .stock-price {
-    font-size: 14px;
-  }
+  .nav { display: none; } /* 简化手机端显示 */
+  .hero { padding-top: 60px; }
+  .hero-title-with-img { gap: 12px; }
 }
