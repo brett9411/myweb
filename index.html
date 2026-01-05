@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>股票记录 - 厍思宁的个人主页</title>
+  <!-- 浏览器标签页标题已修改 -->
+  <title>股票记录 - 我的个人橱窗</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -24,20 +25,24 @@
     <section id="home" class="hero">
       <div class="container hero-content">
         <div class="hero-text">
+          <!-- 标题已完全去除文字姓名 -->
           <h1 class="hero-title-with-img">
-            你好，我是<img src="me-name.png" alt="厍思宁" class="name-as-image" />
+            你好，我是<img src="me-name.png" alt="Name" class="name-as-image" />
           </h1>
 
+          <!-- 北京时间仪表盘 -->
           <div class="clock-dashboard">
             <div class="clock-label">北京时间</div>
             <div class="clock-date" id="clockDate">0000.00.00 星期一</div>
             <div class="beijing-clock" id="beijingClock">00:00:00</div>
           </div>
           
+          <!-- 个人大图 -->
           <div class="hero-avatar">
-            <img src="1767246246813.jpg" alt="厍思宁" class="avatar-image" />
+            <img src="1767246246813.jpg" alt="Profile" class="avatar-image" />
           </div>
 
+          <!-- 股票列表容器 -->
           <div class="stocks-container" id="stocksContainer">
             <div class="stock-loading">正在获取行情...</div>
           </div>
@@ -47,10 +52,13 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content"></div>
+    <div class="container footer-content">
+      <!-- 底部保持清爽 -->
+    </div>
   </footer>
 
   <script>
+    // --- 导航逻辑 ---
     const navToggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('.nav');
     navToggle.addEventListener('click', () => {
@@ -58,16 +66,19 @@
       navToggle.classList.toggle('nav-toggle-open');
     });
 
+    // --- 北京时间仪表盘逻辑 ---
     function updateClock() {
       const clockElement = document.getElementById('beijingClock');
       const dateElement = document.getElementById('clockDate');
       const now = new Date();
+      
       const options = {
         timeZone: 'Asia/Shanghai',
         year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit', second: '2-digit',
         weekday: 'long', hour12: false
       };
+      
       const formatter = new Intl.DateTimeFormat('zh-CN', options);
       const parts = formatter.formatToParts(now);
       const val = (type) => parts.find(p => p.type === type).value;
@@ -77,11 +88,12 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // --- 股票数据配置 (已补全所有 6 位代码) ---
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF' },
-      { code: 'sh601288', name: '农业银行' },
-      { code: 'sh601919', name: '中远海控' },
-      { code: 'sh512690', name: '酒ETF' },
+      { code: 'sh601288', name: '601288 农业银行' },
+      { code: 'sh601919', name: '601919 中远海控' },
+      { code: 'sh512690', name: '512690 酒ETF' },
       { code: 'sh513050', name: '513050 中概互联ETF' },
       { code: 'sz159567', name: '159567 港股创新药ETF' }
     ];
@@ -130,7 +142,6 @@
         if (data) {
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
-          // 这里的图片地址使用了新浪财经的 K 线图接口
           const kLineUrl = `https://image.sinajs.cn/newchart/daily/n/${data.code}.gif`;
           
           html += `<div class="stock-widget">
@@ -140,9 +151,8 @@
               <span class="stock-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</span>
               <span class="stock-detail">今开${data.open} | 高${data.high} | 低${data.low}</span>
             </div>
-            <!-- 新增 K 线图展示 -->
             <div class="stock-chart">
-              <img src="${kLineUrl}" alt="${data.name} K线图" />
+              <img src="${kLineUrl}" alt="${data.name} Chart" />
             </div>
           </div>`;
         }
@@ -151,7 +161,7 @@
     }
 
     fetchStocks();
-    setInterval(fetchStocks, 60000); // K线图不需要刷太快，1分钟刷一次数据即可
+    setInterval(fetchStocks, 60000); 
   </script>
 </body>
 </html>
