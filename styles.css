@@ -198,6 +198,29 @@ img {
   letter-spacing: 0.12em;
 }
 
+/* --- 新增：图片姓名样式逻辑 --- */
+.hero-title-with-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.name-as-image {
+  height: 58px; /* 这里是 (46+80)/2 的优化中间值 */
+  width: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.name-as-image:hover {
+  transform: scale(1.05);
+}
+
 .eyebrow {
   font-size: 12px;
   letter-spacing: 0.25em;
@@ -211,61 +234,6 @@ img {
   color: #c8c8c8;
   font-size: 15px;
   text-align: center;
-}
-
-/* 天气组件 */
-.weather-widget {
-  margin: 16px 0 24px;
-  padding: 12px 20px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-}
-
-.weather-loading {
-  font-size: 13px;
-  color: #a0a0a0;
-  letter-spacing: 0.1em;
-}
-
-.weather-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: #e5e5e5;
-}
-
-.weather-location {
-  font-weight: 500;
-  color: #ffffff;
-}
-
-.weather-temp {
-  font-size: 15px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.weather-desc {
-  color: #c8c8c8;
-}
-
-.weather-humidity {
-  color: #a0a0a0;
-  font-size: 12px;
-}
-
-.weather-simple {
-  color: #c8c8c8;
-}
-
-.weather-error {
-  color: #a0a0a0;
-  font-size: 12px;
 }
 
 /* 股票组件 */
@@ -365,177 +333,6 @@ img {
   padding: 8px;
 }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 11px 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #ffffff;
-  color: #050505;
-  font-size: 14px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.18s ease, transform 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.hero-side {
-  display: grid;
-  gap: 16px;
-  width: 100%;
-  max-width: 600px;
-  margin-top: 8px;
-}
-
-.hero-card {
-  border-radius: 18px;
-  padding: 16px 18px;
-  background: radial-gradient(
-      circle at top left,
-      rgba(255, 255, 255, 0.1),
-      transparent 50%
-    ),
-    rgba(10, 10, 10, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.hero-label {
-  margin: 0 0 4px;
-  font-size: 12px;
-  color: #b0b0b0;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.hero-value {
-  margin: 0;
-  font-size: 14px;
-  color: #f5f5f5;
-}
-
-/* 通用区块 */
-.section {
-  padding: 64px 0;
-}
-
-.section-alt {
-  background: linear-gradient(
-    180deg,
-    rgba(12, 12, 12, 0.98),
-    rgba(5, 5, 5, 1)
-  );
-}
-
-.section-content {
-  max-width: 900px;
-}
-
-.section-header {
-  margin-bottom: 32px;
-}
-
-.section-header h2 {
-  margin: 0 0 8px;
-  font-size: 22px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.section-header p {
-  margin: 0;
-  color: #c0c0c0;
-  font-size: 14px;
-}
-
-.grid {
-  display: grid;
-  gap: 24px;
-}
-
-.two-column {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.two-column h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
-}
-
-.two-column p {
-  margin: 0;
-  color: #d0d0d0;
-  font-size: 14px;
-}
-
-/* 卡片样式（作品） */
-.cards {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.card {
-  padding: 18px 18px 20px;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: radial-gradient(
-      circle at top,
-      rgba(255, 255, 255, 0.1),
-      transparent 55%
-    ),
-    rgba(10, 10, 10, 0.96);
-  transition: transform 0.16s ease, box-shadow 0.16s ease,
-    border-color 0.16s ease;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
-.card h3 {
-  margin: 0 0 10px;
-  font-size: 15px;
-}
-
-.card p {
-  margin: 0;
-  font-size: 13px;
-  color: #d5d5d5;
-}
-
-/* 联系区 */
-.contact-section {
-  max-width: 640px;
-}
-
-.contact-info p {
-  margin: 0 0 6px;
-  font-size: 14px;
-  color: #d5d5d5;
-}
-
-.contact-info a {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  padding-bottom: 1px;
-}
-
-.contact-info a:hover {
-  border-color: #ffffff;
-}
-
 /* 页脚 */
 .site-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -553,14 +350,6 @@ img {
 @media (max-width: 900px) {
   .avatar-image {
     max-width: 240px;
-  }
-
-  .hero-side {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -595,12 +384,6 @@ img {
   .hero {
     padding-top: 56px;
   }
-
-  .two-column,
-  .cards,
-  .hero-side {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 @media (max-width: 480px) {
@@ -620,29 +403,10 @@ img {
     max-width: 200px;
   }
 
-  .weather-info {
-    font-size: 12px;
-    gap: 8px;
+  .name-as-image {
+    height: 42px; /* 手机端同步缩小比例 */
   }
 
-  .weather-temp {
-    font-size: 14px;
-  }
-
-  .stock-info {
-    font-size: 12px;
-    gap: 8px;
-    justify-content: flex-start;
-  }
-
-  .stock-name {
-    min-width: 150px;
-    max-width: 100%;
-    font-size: 12px;
-    white-space: normal;
-    word-break: break-word;
-  }
-  
   .stock-widget {
     padding: 12px 20px;
   }
@@ -650,9 +414,4 @@ img {
   .stock-price {
     font-size: 14px;
   }
-
-  .stock-detail {
-    font-size: 10px;
-  }
 }
-
