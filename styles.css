@@ -146,16 +146,46 @@ img {
 }
 
 .hero-content {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  gap: 40px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  gap: 32px;
+}
+
+.hero-avatar {
+  margin: 16px 0 20px;
+}
+
+.avatar-image {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  filter: grayscale(15%) contrast(1.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.avatar-image:hover {
+  transform: scale(1.01);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .hero-text h1 {
   margin: 0 0 12px;
   font-size: clamp(32px, 5vw, 46px);
   letter-spacing: 0.04em;
+  text-align: center;
 }
 
 .hero-text .highlight {
@@ -177,9 +207,142 @@ img {
 }
 
 .subtitle {
-  margin: 0 0 24px;
+  margin: 0 0 20px;
   color: #c8c8c8;
   font-size: 15px;
+  text-align: center;
+}
+
+/* 天气组件 */
+.weather-widget {
+  margin: 16px 0 24px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.weather-loading {
+  font-size: 13px;
+  color: #a0a0a0;
+  letter-spacing: 0.1em;
+}
+
+.weather-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #e5e5e5;
+}
+
+.weather-location {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.weather-temp {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.weather-desc {
+  color: #c8c8c8;
+}
+
+.weather-humidity {
+  color: #a0a0a0;
+  font-size: 12px;
+}
+
+.weather-simple {
+  color: #c8c8c8;
+}
+
+.weather-error {
+  color: #a0a0a0;
+  font-size: 12px;
+}
+
+/* 股票组件 */
+.stocks-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 16px 0 24px;
+}
+
+.stock-widget {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.stock-loading {
+  font-size: 13px;
+  color: #a0a0a0;
+  letter-spacing: 0.1em;
+}
+
+.stock-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #e5e5e5;
+}
+
+.stock-name {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.stock-price {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.stock-up {
+  color: #4ade80;
+}
+
+.stock-down {
+  color: #f87171;
+}
+
+.stock-change {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.stock-detail {
+  color: #a0a0a0;
+  font-size: 11px;
+}
+
+.stock-error {
+  color: #a0a0a0;
+  font-size: 12px;
+}
+
+.stock-error-message {
+  text-align: center;
+  color: #a0a0a0;
+  font-size: 12px;
+  margin-top: 8px;
+  padding: 8px;
 }
 
 .btn-primary {
@@ -212,6 +375,9 @@ img {
 .hero-side {
   display: grid;
   gap: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 8px;
 }
 
 .hero-card {
@@ -365,8 +531,8 @@ img {
 
 /* 响应式处理 */
 @media (max-width: 900px) {
-  .hero-content {
-    grid-template-columns: minmax(0, 1fr);
+  .avatar-image {
+    max-width: 240px;
   }
 
   .hero-side {
@@ -428,6 +594,32 @@ img {
 
   .hero {
     padding: 60px 0 56px;
+  }
+
+  .avatar-image {
+    max-width: 200px;
+  }
+
+  .weather-info {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .weather-temp {
+    font-size: 14px;
+  }
+
+  .stock-info {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .stock-price {
+    font-size: 14px;
+  }
+
+  .stock-detail {
+    font-size: 10px;
   }
 }
 
