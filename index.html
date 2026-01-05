@@ -9,7 +9,7 @@
 <body>
   <header class="site-header">
     <div class="container nav-container">
-      <div class="logo">MyProfile</div>
+      <div class="logo">我的个人橱窗</div>
       <nav class="nav">
         <a href="#home">首页</a>
       </nav>
@@ -27,6 +27,9 @@
           <h1 class="hero-title-with-img">
             你好，我是<img src="me-name.png" alt="厍思宁" class="name-as-image" />
           </h1>
+
+          <!-- 新增：北京时间电子时钟 -->
+          <div class="beijing-clock" id="beijingClock">00:00:00</div>
           
           <div class="hero-avatar">
             <img src="1767246246813.jpg" alt="厍思宁" class="avatar-image" />
@@ -41,13 +44,11 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <!-- 这里已删除版权信息文字 -->
-    </div>
+    <div class="container footer-content"></div>
   </footer>
 
   <script>
-    // 导航逻辑
+    // 1. 导航逻辑
     const navToggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('.nav');
     navToggle.addEventListener('click', () => {
@@ -55,14 +56,31 @@
       navToggle.classList.toggle('nav-toggle-open');
     });
 
-    // 股票配置
+    // 2. 北京时间电子时钟逻辑
+    function updateClock() {
+      const clockElement = document.getElementById('beijingClock');
+      // 强制使用北京时间 (UTC+8)
+      const options = {
+        timeZone: 'Asia/Shanghai',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      };
+      const formatter = new Intl.DateTimeFormat('zh-CN', options);
+      clockElement.textContent = formatter.format(new Date());
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // 立即执行一次
+
+    // 3. 股票配置 (已修正 159567 名称)
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF' },
       { code: 'sh601288', name: '农业银行' },
       { code: 'sh601919', name: '中远海控' },
       { code: 'sh512690', name: '酒ETF' },
       { code: 'sh513050', name: '513050 中概互联ETF' },
-      { code: 'sz159567', name: '159567 黄金股ETF' }
+      { code: 'sz159567', name: '159567 港股创新药ETF' }
     ];
     
     function fetchStockData(stockCode) {
