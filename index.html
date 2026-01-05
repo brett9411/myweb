@@ -24,24 +24,20 @@
     <section id="home" class="hero">
       <div class="container hero-content">
         <div class="hero-text">
-          <!-- 1. 艺术名字标题 -->
           <h1 class="hero-title-with-img">
             你好，我是<img src="me-name.png" alt="厍思宁" class="name-as-image" />
           </h1>
 
-          <!-- 2. 升级后的时钟仪表盘装饰 -->
           <div class="clock-dashboard">
             <div class="clock-label">北京时间</div>
             <div class="clock-date" id="clockDate">0000.00.00 星期一</div>
             <div class="beijing-clock" id="beijingClock">00:00:00</div>
           </div>
           
-          <!-- 3. 居中的个人大图 -->
           <div class="hero-avatar">
             <img src="1767246246813.jpg" alt="厍思宁" class="avatar-image" />
           </div>
 
-          <!-- 4. 股票组件 -->
           <div class="stocks-container" id="stocksContainer">
             <div class="stock-loading">正在获取行情...</div>
           </div>
@@ -51,13 +47,10 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <!-- 底部保持清爽 -->
-    </div>
+    <div class="container footer-content"></div>
   </footer>
 
   <script>
-    // --- 导航切换逻辑 ---
     const navToggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('.nav');
     navToggle.addEventListener('click', () => {
@@ -65,41 +58,25 @@
       navToggle.classList.toggle('nav-toggle-open');
     });
 
-    // --- 北京时间仪表盘逻辑 ---
     function updateClock() {
       const clockElement = document.getElementById('beijingClock');
       const dateElement = document.getElementById('clockDate');
       const now = new Date();
-      
-      // 使用 Intl API 获取北京时间
       const options = {
         timeZone: 'Asia/Shanghai',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        weekday: 'long',
-        hour12: false
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        weekday: 'long', hour12: false
       };
-      
       const formatter = new Intl.DateTimeFormat('zh-CN', options);
       const parts = formatter.formatToParts(now);
       const val = (type) => parts.find(p => p.type === type).value;
-
-      // 组装日期格式：XXXX.XX.XX 星期几
-      const dateStr = `${val('year')}.${val('month')}.${val('day')} ${val('weekday')}`;
-      // 组装时间格式：00:00:00
-      const timeStr = `${val('hour')}:${val('minute')}:${val('second')}`;
-
-      dateElement.textContent = dateStr;
-      clockElement.textContent = timeStr;
+      dateElement.textContent = `${val('year')}.${val('month')}.${val('day')} ${val('weekday')}`;
+      clockElement.textContent = `${val('hour')}:${val('minute')}:${val('second')}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // --- 股票数据逻辑 ---
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF' },
       { code: 'sh601288', name: '农业银行' },
@@ -128,6 +105,7 @@
                   const change = price - parseFloat(data[4]);
                   const percent = parseFloat(data[4]) > 0 ? ((change / parseFloat(data[4])) * 100).toFixed(2) : '0.00';
                   resolve({
+                    code: stockCode,
                     name, price: price.toFixed(3), change: change.toFixed(3),
                     percent, isUp: change >= 0,
                     open: parseFloat(data[5]).toFixed(2), high: parseFloat(data[33]).toFixed(2), low: parseFloat(data[34]).toFixed(2)
@@ -152,12 +130,19 @@
         if (data) {
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
+          // 这里的图片地址使用了新浪财经的 K 线图接口
+          const kLineUrl = `https://image.sinajs.cn/newchart/daily/n/${data.code}.gif`;
+          
           html += `<div class="stock-widget">
             <div class="stock-name-row"><span class="stock-name">📈 ${data.name}</span></div>
             <div class="stock-info">
               <span class="stock-price ${colorClass}">${data.price}</span>
               <span class="stock-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</span>
               <span class="stock-detail">今开${data.open} | 高${data.high} | 低${data.low}</span>
+            </div>
+            <!-- 新增 K 线图展示 -->
+            <div class="stock-chart">
+              <img src="${kLineUrl}" alt="${data.name} K线图" />
             </div>
           </div>`;
         }
@@ -166,7 +151,7 @@
     }
 
     fetchStocks();
-    setInterval(fetchStocks, 10000); 
+    setInterval(fetchStocks, 60000); // K线图不需要刷太快，1分钟刷一次数据即可
   </script>
 </body>
 </html>
