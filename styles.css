@@ -17,7 +17,7 @@ body {
     "Microsoft YaHei", sans-serif;
   background-color: #050505;
   color: #f5f5f5;
-  line-height: 1.2; /* 缩小行高，让大字更紧凑 */
+  line-height: 1.2;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -68,11 +68,6 @@ img {
   font-size: 14px;
 }
 
-.nav a:hover {
-  color: #ffffff;
-}
-
-/* 手机端导航按钮 */
 .nav-toggle {
   display: none;
   width: 34px;
@@ -85,7 +80,7 @@ img {
   cursor: pointer;
 }
 
-/* Hero 区域 - 重点修改部分 */
+/* Hero 区域 */
 .hero {
   padding: 100px 0 80px;
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05), transparent 70%);
@@ -101,49 +96,47 @@ img {
 
 .hero-text {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 确保文字区域内所有内容居中 */
 }
 
-/* 放大 2.5 倍后的标题文字 */
 .hero-text h1 {
   margin: 0;
-  /* 使用 clamp 确保在大屏幕是 115px，在小屏幕会自动缩小防止溢出 */
   font-size: clamp(40px, 12vw, 115px); 
   font-weight: 800;
-  letter-spacing: -0.02em; /* 大字通常需要负缩进才好看 */
+  letter-spacing: -0.02em;
   line-height: 1.1;
-}
-
-/* 图片姓名容器 */
-.hero-title-with-img {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px; /* 间距也随之放大 */
-  flex-wrap: wrap; /* 关键：空间不足时图片会自动换到下一行 */
+  flex-wrap: wrap;
+  gap: 24px;
 }
 
-/* 放大 2.5 倍后的图片 */
 .name-as-image {
-  height: clamp(60px, 15vw, 145px); /* 随屏幕缩放，最大 145px */
+  height: clamp(60px, 15vw, 145px);
   width: auto;
-  border-radius: 20px; /* 圆角也同步放大 */
+  border-radius: 20px;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s ease;
 }
 
-.name-as-image:hover {
-  transform: scale(1.05) rotate(-2deg);
-}
-
+/* 底下那张图的容器 - 强制居中 */
 .hero-avatar {
-  margin-top: 20px;
+  margin-top: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .avatar-image {
   max-width: 350px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto; /* 块级居中 */
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  filter: grayscale(20%);
 }
 
 /* 股票组件 */
@@ -153,7 +146,7 @@ img {
   align-items: center;
   gap: 16px;
   width: 100%;
-  margin-top: 40px;
+  margin-top: 60px;
 }
 
 .stock-widget {
@@ -169,6 +162,7 @@ img {
 .stock-name {
   font-size: 16px;
   font-weight: 500;
+  text-align: left;
 }
 
 .stock-info {
@@ -187,16 +181,12 @@ img {
 .stock-down { color: #4ade80; }
 
 .site-footer {
-  padding: 40px 0;
-  text-align: center;
-  font-size: 12px;
-  color: #666;
+  padding: 60px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* 响应式调整 */
 @media (max-width: 720px) {
-  .nav { display: none; } /* 简化手机端显示 */
+  .nav { display: none; }
   .hero { padding-top: 60px; }
-  .hero-title-with-img { gap: 12px; }
+  .avatar-image { max-width: 280px; }
 }

@@ -24,18 +24,14 @@
     <section id="home" class="hero">
       <div class="container hero-content">
         <div class="hero-text">
-          <!-- 修改后的标题：去掉了文字姓名，换成了图片 -->
           <h1 class="hero-title-with-img">
             你好，我是<img src="me-name.png" alt="厍思宁" class="name-as-image" />
           </h1>
           
           <div class="hero-avatar">
-            <!-- 原有的头像可以保留，也可以删掉（如果觉得两个图片重复了的话） -->
-            <!-- 如果你想删掉下面那个大图，直接删掉整个 hero-avatar 区域即可 -->
             <img src="1767246246813.jpg" alt="厍思宁" class="avatar-image" />
           </div>
 
-          <!-- 股票组件 -->
           <div class="stocks-container" id="stocksContainer">
             <div class="stock-loading">正在获取行情...</div>
           </div>
@@ -46,13 +42,12 @@
 
   <footer class="site-footer">
     <div class="container footer-content">
-      <p>© <span id="year"></span> 厍思宁. All rights reserved.</p>
+      <!-- 这里已删除版权信息文字 -->
     </div>
   </footer>
 
   <script>
-    // 基础逻辑
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // 导航逻辑
     const navToggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('.nav');
     navToggle.addEventListener('click', () => {
@@ -60,6 +55,7 @@
       navToggle.classList.toggle('nav-toggle-open');
     });
 
+    // 股票配置
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF' },
       { code: 'sh601288', name: '农业银行' },
