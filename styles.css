@@ -4,13 +4,12 @@ html, body { margin: 0; padding: 0; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
-  /* 修改：设置背景图片 */
   background: 
-    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), /* 暗色遮罩，确保文字清晰 */
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url('bg.jpg'); 
-  background-size: cover;        /* 图片覆盖全屏 */
-  background-position: center;   /* 图片居中 */
-  background-attachment: fixed;  /* 背景固定，内容滚动（产生高级感） */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: #ffffff;
   line-height: 1.2;
   -webkit-font-smoothing: antialiased;
@@ -18,84 +17,83 @@ body {
 
 .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 
-/* 导航 - 增加磨砂玻璃效果 */
+/* 导航 */
 .site-header {
   position: sticky; top: 0; z-index: 100;
-  backdrop-filter: blur(20px); 
-  background: rgba(0, 0, 0, 0.4); 
+  backdrop-filter: blur(20px); background: rgba(0, 0, 0, 0.4); 
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .nav-container { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; }
 .logo { font-weight: 600; font-size: 15px; letter-spacing: 0.1em; }
 .nav { display: flex; gap: 28px; font-size: 14px; }
 
-/* Hero 区域 - 去掉之前的径向渐变，让背景图透出来 */
-.hero { padding: 80px 0 60px; background: transparent; }
+/* Hero */
+.hero { padding: 80px 0 60px; }
 .hero-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 30px; }
-.hero-text { width: 100%; display: flex; flex-direction: column; align-items: center; }
 
-/* 超大标题 */
-.hero-text h1 {
-  margin: 0; font-size: clamp(40px, 12vw, 115px); font-weight: 800;
-  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 24px;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.5); /* 增加文字阴影，防止被背景淹没 */
+/* 标题图片居中 */
+.hero-text { 
+  width: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
 }
-.name-as-image { height: clamp(60px, 15vw, 145px); border-radius: 20px; border: 2px solid rgba(255, 255, 255, 0.3); }
+.hero-title-with-img {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.name-as-image { 
+  height: clamp(80px, 20vw, 145px); /* 保持霸气的大小 */
+  border-radius: 20px; 
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 
 /* 时钟仪表盘 */
 .clock-dashboard {
   margin: 40px 0; padding: 24px 50px; 
-  background: rgba(0, 0, 0, 0.4); /* 深色半透明 */
+  background: rgba(0, 0, 0, 0.4); 
   border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 32px;
   backdrop-filter: blur(10px);
   display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
+.clock-label { font-size: 12px; letter-spacing: 0.4em; color: #aaa; text-transform: uppercase; }
 .clock-date { font-family: monospace; font-size: 16px; color: #ccc; }
-.beijing-clock { font-family: monospace; font-size: clamp(32px, 8vw, 48px); letter-spacing: 6px; color: #fff; }
+.beijing-clock { font-family: monospace; font-size: clamp(32px, 8vw, 48px); letter-spacing: 6px; }
 
-/* 个人头像 */
+/* 头像居中 */
 .hero-avatar { margin-top: 20px; display: flex; justify-content: center; }
-.avatar-image { 
-  max-width: 350px; border-radius: 12px; 
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
+.avatar-image { max-width: 350px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); }
 
-/* 股票组件 - 强化对比度 */
+/* 股票组件 */
 .stocks-container {
   display: flex; flex-direction: column; align-items: center;
   gap: 30px; width: 100%; margin-top: 60px;
 }
-
 .stock-widget {
   width: 100%; max-width: 900px;
   padding: 30px; border-radius: 32px;
-  background: rgba(0, 0, 0, 0.6); /* 加深背景，确保K线图清晰 */
+  background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(15px);
   display: flex; flex-direction: column; align-items: center;
 }
-
-.stock-name { font-size: 18px; font-weight: 600; color: #fff; }
+.stock-name { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
 .stock-info { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px; }
 .stock-price { font-size: 24px; font-weight: 800; }
-.stock-up { color: #ff5e5e; }   /* 调亮一点红色 */
+.stock-up { color: #ff5e5e; }
 .stock-down { color: #4ade80; }
 .stock-detail { color: #bbb; font-size: 14px; }
+.stock-chart { width: 100%; display: flex; justify-content: center; margin-top: 10px; border-radius: 12px; overflow: hidden; }
+.stock-chart img { width: 100%; max-width: 600px; height: auto; filter: invert(1) hue-rotate(180deg) brightness(1.1); }
 
-/* K 线图样式 */
-.stock-chart {
-  width: 100%; display: flex; justify-content: center;
-  margin-top: 10px; overflow: hidden; border-radius: 12px;
-}
-.stock-chart img {
-  width: 100%; max-width: 600px; height: auto;
-  filter: invert(1) hue-rotate(180deg) brightness(1.1); /* 保持黑色K线适配 */
-}
-
-.site-footer { padding: 60px 0; background: rgba(0,0,0,0.5); }
+.site-footer { padding: 60px 0; }
 
 @media (max-width: 720px) {
   .nav { display: none; }
+  .clock-dashboard { padding: 20px; }
   .beijing-clock { letter-spacing: 2px; }
+  .name-as-image { height: 70px; }
 }
