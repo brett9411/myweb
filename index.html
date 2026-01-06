@@ -5,11 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>股票记录 - 我的个人橱窗</title>
   <link rel="stylesheet" href="styles.css" />
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-container">
-      <div class="logo">我的个人橱窗</div>
+      <div class="header-left">
+        <div class="logo">我的个人橱窗</div>
+        <div class="visitor-badge" id="busuanzi_container_site_uv" style="display:none">
+          <span class="v-icon">👥</span>
+          <span class="v-text">访客:</span>
+          <span class="v-num" id="busuanzi_value_site_uv">--</span>
+        </div>
+      </div>
+
       <nav class="nav">
         <a href="#home">首页</a>
       </nav>
@@ -38,26 +47,30 @@
             <img src="1767246246813.jpg" alt="Profile" class="avatar-image" />
           </div>
 
-          <!-- 大盘指数 -->
           <div class="indices-container" id="indicesContainer">
             <div class="index-loading">正在同步指数...</div>
           </div>
 
-          <!-- 新增：个人资产仪表盘 -->
+          <!-- 模拟盘仪表盘 -->
           <div class="portfolio-dashboard" id="portfolioDashboard">
-            <div class="portfolio-item">
-              <div class="p-label">总资产 (元)</div>
-              <div class="p-value" id="totalAssets">计算中...</div>
-            </div>
-            <div class="portfolio-item">
-              <div class="p-label">当日盈亏 (元)</div>
-              <div class="p-value" id="totalProfit">--</div>
+            <!-- 新增：标题 -->
+            <div class="portfolio-title">模拟盘</div>
+            
+            <!-- 数据行 -->
+            <div class="portfolio-row">
+              <div class="portfolio-item">
+                <div class="p-label">总资产 (元)</div>
+                <div class="p-value" id="totalAssets">计算中...</div>
+              </div>
+              <div class="portfolio-item">
+                <div class="p-label">当日盈亏 (元)</div>
+                <div class="p-value" id="totalProfit">--</div>
+              </div>
             </div>
           </div>
 
-          <!-- 股票容器 -->
           <div class="stocks-container" id="stocksContainer">
-            <div class="stock-loading">正在同步行情数据...</div>
+            <div class="stock-loading">正在同步行情...</div>
           </div>
         </div>
       </div>
@@ -104,14 +117,7 @@
       { code: 'sh000688', name: '科创50' }
     ];
 
-    // --- 在这里修改持仓和现金 ---
-    
-    // 1. 设置你的剩余现金（或者是理财、未投入股市的钱）
-    // 为了凑成你想要的 1433358.72，我大概算了一下，你的股票市值约 110万，所以现金填了 328000
-    // 如果你想总数精确等于某个值，你可以微调这个数字
     const CASH = 328681.72; 
-
-    // 2. 股票配置与持仓
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF', holding: 0 },
       { code: 'sh601288', name: '601288 农业银行', holding: 44200 },
@@ -121,8 +127,6 @@
       { code: 'sz159567', name: '159567 港股创新药ETF', holding: 0 }
     ];
 
-    // --- 自动排序逻辑：有持仓的排前面 ---
-    // holding > 0 的排在 holding == 0 的前面
     STOCKS.sort((a, b) => {
       const holdingA = a.holding || 0;
       const holdingB = b.holding || 0;
@@ -150,7 +154,7 @@
                   resolve({
                     code: stockCode,
                     name: data[1],
-                    price: price.toFixed(3), // 这里的3位小数更准
+                    price: price.toFixed(3),
                     change: change.toFixed(3),
                     percent,
                     isUp: change >= 0,
@@ -178,7 +182,6 @@
         if (data) {
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
-          // 指数价格通常保留2位
           const indexPrice = parseFloat(data.price).toFixed(2);
           const indexChange = parseFloat(data.change).toFixed(2);
           html += `
@@ -197,8 +200,8 @@
       const results = await Promise.all(STOCKS.map(s => fetchStockData(s.code)));
       
       let html = '';
-      let totalStockValue = 0; // 股票总市值
-      let totalDailyProfit = 0; // 当日总盈亏
+      let totalStockValue = 0;
+      let totalDailyProfit = 0;
 
       results.forEach(data => {
         if (data) {
@@ -212,15 +215,10 @@
           
           let profitHtml = '';
           if (holding > 0) {
-            // 计算单只股票盈亏
             const dailyProfit = parseFloat(data.change) * holding;
             const profitSign = dailyProfit >= 0 ? '+' : '';
-            // 累加总盈亏
             totalDailyProfit += dailyProfit;
-            // 累加总市值
             totalStockValue += parseFloat(data.price) * holding;
-
-            // 显示格式化后的单只盈亏
             profitHtml = `<div class="daily-profit ${colorClass}">今日盈亏: ${profitSign}${dailyProfit.toFixed(2)}</div>`;
           }
 
@@ -239,19 +237,13 @@
       
       container.innerHTML = html;
 
-      // --- 更新顶部的总资产面板 ---
-      // 总资产 = 股票总市值 + 现金
       const finalAssets = totalStockValue + CASH;
-      
       const assetsEl = document.getElementById('totalAssets');
       const profitEl = document.getElementById('totalProfit');
-      
-      // 数字格式化（加逗号）
       assetsEl.textContent = finalAssets.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       
       const profitSign = totalDailyProfit >= 0 ? '+' : '';
       const profitColor = totalDailyProfit >= 0 ? '#ff5e5e' : '#4ade80';
-      
       profitEl.textContent = `${profitSign}${totalDailyProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       profitEl.style.color = profitColor;
     }
