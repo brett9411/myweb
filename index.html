@@ -24,12 +24,10 @@
     <section id="home" class="hero">
       <div class="container hero-content">
         <div class="hero-text">
-          <!-- 1. 纯图片标题，已去掉文字并保持居中 -->
           <h1 class="hero-title-with-img">
             <img src="me-name.png" alt="Name" class="name-as-image" />
           </h1>
 
-          <!-- 2. 升级后的仪表盘：增加沈阳和春节倒计时 -->
           <div class="clock-dashboard">
             <div class="clock-label">北京时间 沈阳</div>
             <div class="clock-date" id="clockDate">0000.00.00 星期一 | 距离春节还有 00 天</div>
@@ -38,6 +36,11 @@
           
           <div class="hero-avatar">
             <img src="1767246246813.jpg" alt="Profile" class="avatar-image" />
+          </div>
+
+          <!-- 新增：大盘指数行 -->
+          <div class="indices-container" id="indicesContainer">
+            <div class="index-loading">正在加载指数...</div>
           </div>
 
           <div class="stocks-container" id="stocksContainer">
@@ -53,7 +56,6 @@
   </footer>
 
   <script>
-    // 导航切换
     const navToggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('.nav');
     navToggle.addEventListener('click', () => {
@@ -61,46 +63,36 @@
       navToggle.classList.toggle('nav-toggle-open');
     });
 
-    // 自动倒计时与时钟逻辑
     function updateClock() {
       const clockElement = document.getElementById('beijingClock');
       const dateElement = document.getElementById('clockDate');
       const now = new Date();
-      
-      // 北京时间配置
       const options = {
         timeZone: 'Asia/Shanghai',
         year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit', second: '2-digit',
         weekday: 'long', hour12: false
       };
-      
       const formatter = new Intl.DateTimeFormat('zh-CN', options);
       const parts = formatter.formatToParts(now);
       const val = (type) => parts.find(p => p.type === type).value;
-      
-      // 计算距离 2026年春节 (2月17日) 的天数
       const springFestival = new Date('2026-02-17T00:00:00+08:00');
-      // 计算差值（毫秒）转为天数
-      const diffTime = springFestival - now;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      let countdownText = "";
-      if (diffDays > 0) {
-        countdownText = ` | 距离春节还有 ${diffDays} 天`;
-      } else if (diffDays === 0) {
-        countdownText = ` | 🧧 新春快乐！`;
-      }
-
-      // 更新日期和倒计时
+      const diffDays = Math.ceil((springFestival - now) / (1000 * 60 * 60 * 24));
+      let countdownText = diffDays > 0 ? ` | 距离春节还有 ${diffDays} 天` : (diffDays === 0 ? ` | 🧧 新春快乐！` : "");
       dateElement.textContent = `${val('year')}.${val('month')}.${val('day')} ${val('weekday')}${countdownText}`;
-      // 更新时间
       clockElement.textContent = `${val('hour')}:${val('minute')}:${val('second')}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 股票配置
+    // 1. 指数配置
+    const INDICES = [
+      { code: 'sh000001', name: '上证指数' },
+      { code: 'sz399006', name: '创业板指' },
+      { code: 'sh688000', name: '科创50' }
+    ];
+
+    // 2. 股票配置
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF' },
       { code: 'sh601288', name: '601288 农业银行' },
@@ -123,16 +115,21 @@
               if (globalVar) {
                 const data = globalVar.split('~');
                 if (data.length > 3) {
-                  const stockConfig = STOCKS.find(s => s.code === stockCode);
-                  const name = stockConfig ? stockConfig.name : data[1];
-                  const price = parseFloat(data[3]) > 0 ? parseFloat(data[3]) : parseFloat(data[4]);
-                  const change = price - parseFloat(data[4]);
-                  const percent = parseFloat(data[4]) > 0 ? ((change / parseFloat(data[4])) * 100).toFixed(2) : '0.00';
+                  const currentPrice = parseFloat(data[3]);
+                  const yesterdayClose = parseFloat(data[4]);
+                  const price = currentPrice > 0 ? currentPrice : yesterdayClose;
+                  const change = price - yesterdayClose;
+                  const percent = yesterdayClose > 0 ? ((change / yesterdayClose) * 100).toFixed(2) : '0.00';
                   resolve({
                     code: stockCode,
-                    name, price: price.toFixed(3), change: change.toFixed(3),
-                    percent, isUp: change >= 0,
-                    open: parseFloat(data[5]).toFixed(2), high: parseFloat(data[33]).toFixed(2), low: parseFloat(data[34]).toFixed(2)
+                    name: data[1],
+                    price: price.toFixed(2),
+                    change: change.toFixed(2),
+                    percent,
+                    isUp: change >= 0,
+                    open: parseFloat(data[5]).toFixed(2),
+                    high: parseFloat(data[33]).toFixed(2),
+                    low: parseFloat(data[34]).toFixed(2)
                   });
                   return;
                 }
@@ -146,7 +143,28 @@
       });
     }
     
-    async function fetchStocks() {
+    // 渲染大盘指数（无K线）
+    async function renderIndices() {
+      const container = document.getElementById('indicesContainer');
+      const results = await Promise.all(INDICES.map(s => fetchStockData(s.code)));
+      let html = '';
+      results.forEach(data => {
+        if (data) {
+          const colorClass = data.isUp ? 'stock-up' : 'stock-down';
+          const sign = data.isUp ? '+' : '';
+          html += `
+            <div class="index-card">
+              <div class="index-name">${data.name}</div>
+              <div class="index-price ${colorClass}">${data.price}</div>
+              <div class="index-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</div>
+            </div>`;
+        }
+      });
+      container.innerHTML = html;
+    }
+
+    // 渲染个股（带K线）
+    async function renderStocks() {
       const container = document.getElementById('stocksContainer');
       const results = await Promise.all(STOCKS.map(s => fetchStockData(s.code)));
       let html = '';
@@ -155,24 +173,29 @@
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
           const kLineUrl = `https://image.sinajs.cn/newchart/daily/n/${data.code}.gif`;
+          const stockConfig = STOCKS.find(s => s.code === data.code);
+          const displayName = stockConfig ? stockConfig.name : data.name;
           html += `<div class="stock-widget">
-            <div class="stock-name-row"><span class="stock-name">📈 ${data.name}</span></div>
+            <div class="stock-name-row"><span class="stock-name">📈 ${displayName}</span></div>
             <div class="stock-info">
               <span class="stock-price ${colorClass}">${data.price}</span>
               <span class="stock-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</span>
               <span class="stock-detail">今开${data.open} | 高${data.high} | 低${data.low}</span>
             </div>
-            <div class="stock-chart">
-              <img src="${kLineUrl}" alt="${data.name} Chart" />
-            </div>
+            <div class="stock-chart"><img src="${kLineUrl}" alt="Chart" /></div>
           </div>`;
         }
       });
       container.innerHTML = html;
     }
 
-    fetchStocks();
-    setInterval(fetchStocks, 60000); 
+    function refreshAll() {
+      renderIndices();
+      renderStocks();
+    }
+
+    refreshAll();
+    setInterval(refreshAll, 10000); 
   </script>
 </body>
 </html>

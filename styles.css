@@ -15,7 +15,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 拓宽容器 */
 .container { width: 100%; max-width: 1500px; margin: 0 auto; padding: 0 15px; }
 
 /* 导航 */
@@ -28,7 +27,7 @@ body {
 .logo { font-weight: 600; font-size: 15px; letter-spacing: 0.1em; }
 .nav { display: flex; gap: 28px; font-size: 14px; }
 
-/* Hero 区域 */
+/* Hero */
 .hero { padding: 60px 0 40px; }
 .hero-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
 
@@ -41,7 +40,7 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* 时钟仪表盘 */
+/* 时钟 */
 .clock-dashboard {
   margin: 30px 0; padding: 20px 40px; 
   background: rgba(0, 0, 0, 0.4); 
@@ -53,21 +52,44 @@ body {
 .clock-date { font-family: monospace; font-size: 15px; color: #ccc; }
 .beijing-clock { font-family: monospace; font-size: clamp(30px, 6vw, 42px); letter-spacing: 4px; }
 
-/* --- 电脑端头像：保持原样 --- */
+/* 头像：电脑端保持 */
 .hero-avatar { margin-top: 10px; display: flex; justify-content: center; }
 .avatar-image { 
-  max-width: 300px; /* 电脑上还是 300 像素 */
+  max-width: 300px;
   width: 100%;
   height: auto;
   border-radius: 12px; 
   border: 1px solid rgba(255, 255, 255, 0.2); 
-  transition: transform 0.3s ease;
 }
 
-/* 股票容器：三列布局 */
+/* --- 新增：大盘指数样式 --- */
+.indices-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  margin: 40px 0;
+}
+
+.index-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 25px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  min-width: 200px;
+  text-align: center;
+}
+
+.index-name { font-size: 14px; color: #aaa; margin-bottom: 5px; }
+.index-price { font-size: 20px; font-weight: 800; margin-bottom: 3px; }
+.index-change { font-size: 14px; font-weight: 500; }
+
+/* 股票容器 */
 .stocks-container {
   display: flex; flex-direction: row; flex-wrap: wrap; 
-  justify-content: flex-start; gap: 20px; width: 100%; margin-top: 50px;
+  justify-content: flex-start; gap: 20px; width: 100%; margin-top: 20px;
 }
 
 .stock-widget {
@@ -89,25 +111,14 @@ body {
 
 .site-footer { padding: 40px 0; }
 
-/* --- 响应式逻辑 --- */
-
-/* 中等屏幕：变 2 列 */
+/* 响应式逻辑 */
 @media (max-width: 1000px) {
   .stock-widget { width: calc(50% - 10px); }
 }
 
-/* 手机端 (关键修改点) */
 @media (max-width: 650px) {
   .stock-widget { width: 100%; }
-  
-  /* 头像在手机上放大！填满屏幕宽度 */
-  .avatar-image { 
-    max-width: 600px; /* 设一个较大的值，让它在手机上占满 */
-    width: 95%;      /* 占据 95% 的屏幕宽度 */
-    border-radius: 20px; /* 变大了，圆角也稍微加深一点点好看 */
-  }
-
+  .index-card { width: calc(50% - 10px); min-width: 0; } /* 手机端指数两排 */
+  .avatar-image { max-width: 600px; width: 95%; }
   .beijing-clock { font-size: 26px; letter-spacing: 1px; }
-  .name-as-image { height: 60px; }
-  .clock-dashboard { padding: 15px 25px; }
 }
