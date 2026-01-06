@@ -18,36 +18,41 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .nav-container { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; }
-.header-left { display: flex; align-items: center; gap: 12px; }
+.header-left { display: flex; align-items: center; gap: 15px; }
 
-/* Logo 样式（现在是刷新按钮） */
 .logo { 
   font-weight: 600; font-size: 15px; letter-spacing: 0.1em; 
   color: #ffffff; text-decoration: none; 
-  cursor: pointer;
 }
-.logo:hover { text-decoration: underline; }
+.logo:hover { color: #ff5e5e; } /* 悬停变红提示刷新 */
 
-/* 地理位置标签 */
-.location-badge {
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(255, 255, 255, 0.08); padding: 4px 10px;
-  border-radius: 12px; font-size: 11px; border: 1px solid rgba(255, 255, 255, 0.1); color: #bbb;
-}
-#cityText { font-weight: 600; color: #fff; }
-
-/* 访客计数器 */
 .visitor-badge {
   display: flex; align-items: center; gap: 6px;
-  background: rgba(255, 255, 255, 0.08); padding: 4px 10px;
-  border-radius: 12px; font-size: 11px; border: 1px solid rgba(255, 255, 255, 0.1); color: #bbb;
+  background: rgba(255, 255, 255, 0.1); padding: 4px 10px;
+  border-radius: 12px; font-size: 11px; border: 1px solid rgba(255, 255, 255, 0.1); color: #ccc;
 }
 .v-num { font-weight: 700; color: #fff; font-family: monospace; }
 
 /* Hero 内容 */
-.hero { padding: 60px 0 40px; }
-.hero-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+.hero { padding: 40px 0 40px; }
+.hero-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 15px; }
 .hero-text { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+/* --- 新增：正上方位置标签样式 --- */
+.top-location {
+  margin-bottom: 15px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #ddd;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 18px;
+  border-radius: 100px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeIn 2s ease; /* 增加一个淡入效果 */
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 .hero-title-with-img { margin: 0; display: flex; justify-content: center; align-items: center; }
 .name-as-image { 
   height: clamp(80px, 15vw, 145px); border-radius: 20px; 
@@ -111,7 +116,6 @@ body {
 
 .site-footer { padding: 40px 0; }
 
-/* 响应式 */
 @media (max-width: 950px) { .stock-widget { width: calc(50% - 10px); } }
 @media (max-width: 650px) {
   .stock-widget { width: 100%; }
@@ -119,6 +123,5 @@ body {
   .avatar-image { max-width: 600px; width: 95%; }
   .portfolio-row { flex-direction: column; gap: 20px; }
   .portfolio-dashboard { padding: 20px; width: 95%; }
-  .header-left { gap: 8px; } /* 缩小手机端间距 */
-  .location-badge { display: none; } /* 手机端由于空间不足，隐藏定位 */
+  .top-location { font-size: 12px; padding: 4px 12px; }
 }
