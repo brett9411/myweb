@@ -40,7 +40,7 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* 时钟 */
+/* 时钟仪表盘 */
 .clock-dashboard {
   margin: 30px 0; padding: 20px 40px; 
   background: rgba(0, 0, 0, 0.4); 
@@ -52,22 +52,15 @@ body {
 .clock-date { font-family: monospace; font-size: 15px; color: #ccc; }
 .beijing-clock { font-family: monospace; font-size: clamp(30px, 6vw, 42px); letter-spacing: 4px; }
 
-/* 头像：电脑端保持 */
 .hero-avatar { margin-top: 10px; display: flex; justify-content: center; }
-.avatar-image { 
-  max-width: 300px;
-  width: 100%;
-  height: auto;
-  border-radius: 12px; 
-  border: 1px solid rgba(255, 255, 255, 0.2); 
-}
+.avatar-image { max-width: 300px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); }
 
-/* --- 新增：大盘指数样式 --- */
+/* 大盘指数行 */
 .indices-container {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 15px;
   width: 100%;
   margin: 40px 0;
 }
@@ -75,10 +68,12 @@ body {
 .index-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 15px 25px;
+  padding: 15px 20px;
   border-radius: 20px;
   backdrop-filter: blur(10px);
-  min-width: 200px;
+  flex: 1; /* 让三个卡片平分宽度 */
+  max-width: 300px;
+  min-width: 180px;
   text-align: center;
 }
 
@@ -89,36 +84,61 @@ body {
 /* 股票容器 */
 .stocks-container {
   display: flex; flex-direction: row; flex-wrap: wrap; 
-  justify-content: flex-start; gap: 20px; width: 100%; margin-top: 20px;
+  justify-content: center; gap: 20px; width: 100%; margin-top: 20px;
 }
 
 .stock-widget {
   width: calc(33.33% - 14px); min-width: 280px; 
-  padding: 20px; border-radius: 28px;
+  padding: 24px; border-radius: 28px;
   background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center;
+  backdrop-filter: blur(15px); 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; /* 关键：强制内部所有内容居中 */
+  text-align: center;
 }
 
-.stock-name { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #fff; }
-.stock-info { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 15px; }
-.stock-price { font-size: 20px; font-weight: 800; }
+.stock-name-row { width: 100%; margin-bottom: 12px; }
+.stock-name { font-size: 16px; font-weight: 600; color: #fff; }
+
+.stock-info { 
+  display: flex; 
+  flex-direction: column; /* 改为纵向排列更整齐 */
+  align-items: center; 
+  gap: 8px; 
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.stock-price { font-size: 22px; font-weight: 800; }
 .stock-up { color: #ff5e5e; }
 .stock-down { color: #4ade80; }
-.stock-detail { color: #bbb; font-size: 12px; }
+
+.stock-change { 
+  font-size: 14px; 
+  font-weight: 500; 
+  display: block; /* 强制换行对齐 */
+}
+
+.stock-detail { 
+  color: #bbb; 
+  font-size: 12px; 
+  display: block; 
+  margin-top: 4px;
+}
 
 .stock-chart { width: 100%; display: flex; justify-content: center; margin-top: 5px; border-radius: 10px; overflow: hidden; }
 .stock-chart img { width: 100%; height: auto; filter: invert(1) hue-rotate(180deg) brightness(1.1); }
 
 .site-footer { padding: 40px 0; }
 
-/* 响应式逻辑 */
-@media (max-width: 1000px) {
+/* 响应式 */
+@media (max-width: 1100px) {
   .stock-widget { width: calc(50% - 10px); }
 }
 
-@media (max-width: 650px) {
+@media (max-width: 750px) {
   .stock-widget { width: 100%; }
-  .index-card { width: calc(50% - 10px); min-width: 0; } /* 手机端指数两排 */
-  .avatar-image { max-width: 600px; width: 95%; }
-  .beijing-clock { font-size: 26px; letter-spacing: 1px; }
+  .index-card { flex: none; width: calc(50% - 10px); }
+  .avatar-image { max-width: 240px; }
 }

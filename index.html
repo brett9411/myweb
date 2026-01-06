@@ -38,13 +38,14 @@
             <img src="1767246246813.jpg" alt="Profile" class="avatar-image" />
           </div>
 
-          <!-- 新增：大盘指数行 -->
+          <!-- 大盘指数行 -->
           <div class="indices-container" id="indicesContainer">
-            <div class="index-loading">正在加载指数...</div>
+            <div class="index-loading">正在同步指数数据...</div>
           </div>
 
+          <!-- 个股/ETF 容器 -->
           <div class="stocks-container" id="stocksContainer">
-            <div class="stock-loading">正在获取行情...</div>
+            <div class="stock-loading">正在同步行情数据...</div>
           </div>
         </div>
       </div>
@@ -85,14 +86,13 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 1. 指数配置
+    // 指数配置：修复了科创50的代码
     const INDICES = [
       { code: 'sh000001', name: '上证指数' },
       { code: 'sz399006', name: '创业板指' },
-      { code: 'sh688000', name: '科创50' }
+      { code: 'sh000688', name: '科创50' }
     ];
 
-    // 2. 股票配置
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF' },
       { code: 'sh601288', name: '601288 农业银行' },
@@ -143,7 +143,6 @@
       });
     }
     
-    // 渲染大盘指数（无K线）
     async function renderIndices() {
       const container = document.getElementById('indicesContainer');
       const results = await Promise.all(INDICES.map(s => fetchStockData(s.code)));
@@ -163,7 +162,6 @@
       container.innerHTML = html;
     }
 
-    // 渲染个股（带K线）
     async function renderStocks() {
       const container = document.getElementById('stocksContainer');
       const results = await Promise.all(STOCKS.map(s => fetchStockData(s.code)));
