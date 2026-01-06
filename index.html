@@ -86,20 +86,22 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 指数配置：修复了科创50的代码
+    // 指数配置
     const INDICES = [
       { code: 'sh000001', name: '上证指数' },
       { code: 'sz399006', name: '创业板指' },
       { code: 'sh000688', name: '科创50' }
     ];
 
+    // --- 股票配置 (在此处修改持仓数量) ---
+    // holding: 持股数量 (股)
     const STOCKS = [
-      { code: 'sz159898', name: '159898 医疗器械ETF' },
-      { code: 'sh601288', name: '601288 农业银行' },
-      { code: 'sh601919', name: '601919 中远海控' },
-      { code: 'sh512690', name: '512690 酒ETF' },
-      { code: 'sh513050', name: '513050 中概互联ETF' },
-      { code: 'sz159567', name: '159567 港股创新药ETF' }
+      { code: 'sz159898', name: '159898 医疗器械ETF', holding: 0 },
+      { code: 'sh601288', name: '601288 农业银行', holding: 44200 },
+      { code: 'sh601919', name: '601919 中远海控', holding: 30300 },
+      { code: 'sh512690', name: '512690 酒ETF', holding: 578700 },
+      { code: 'sh513050', name: '513050 中概互联ETF', holding: 0 },
+      { code: 'sz159567', name: '159567 港股创新药ETF', holding: 0 }
     ];
     
     function fetchStockData(stockCode) {
@@ -123,8 +125,8 @@
                   resolve({
                     code: stockCode,
                     name: data[1],
-                    price: price.toFixed(2),
-                    change: change.toFixed(2),
+                    price: price.toFixed(2), // 修正为3位小数以匹配ETF精度? 这里先用2位，如需3位可改
+                    change: change.toFixed(3),
                     percent,
                     isUp: change >= 0,
                     open: parseFloat(data[5]).toFixed(2),
@@ -171,9 +173,24 @@
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
           const kLineUrl = `https://image.sinajs.cn/newchart/daily/n/${data.code}.gif`;
+          
+          // 获取配置中的持仓信息
           const stockConfig = STOCKS.find(s => s.code === data.code);
           const displayName = stockConfig ? stockConfig.name : data.name;
+          const holding = stockConfig ? (stockConfig.holding || 0) : 0;
+          
+          // 计算今日持仓盈亏
+          let profitHtml = '';
+          if (holding > 0) {
+            const dailyProfit = (parseFloat(data.change) * holding).toFixed(2);
+            const profitSign = dailyProfit >= 0 ? '+' : '';
+            // 盈亏文字颜色跟随涨跌颜色
+            profitHtml = `<div class="daily-profit ${colorClass}">今日盈亏: ${profitSign}${dailyProfit}</div>`;
+          }
+
           html += `<div class="stock-widget">
+            <!-- 这里插入盈亏信息，位于名字上方 -->
+            ${profitHtml}
             <div class="stock-name-row"><span class="stock-name">📈 ${displayName}</span></div>
             <div class="stock-info">
               <span class="stock-price ${colorClass}">${data.price}</span>

@@ -15,7 +15,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 维持超宽容器 */
 .container { width: 100%; max-width: 1500px; margin: 0 auto; padding: 0 15px; }
 
 /* 导航 */
@@ -71,16 +70,14 @@ body {
 .index-up { color: #ff5e5e; }
 .index-down { color: #4ade80; }
 
-/* 股票容器 - 核心回归：恢复 3 列 */
+/* 股票容器 */
 .stocks-container {
   display: flex; flex-direction: row; flex-wrap: wrap; 
   justify-content: center; gap: 20px; width: 100%; margin-top: 20px;
 }
 
 .stock-widget {
-  /* 强制 3 列计算 */
-  width: calc(33.333% - 15px); 
-  min-width: 250px; /* 进一步缩小最小宽度限制 */
+  width: calc(33.333% - 15px); min-width: 250px; 
   padding: 24px; border-radius: 28px;
   background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(15px); 
@@ -88,35 +85,43 @@ body {
   text-align: center;
 }
 
+/* 新增：持仓盈亏样式 */
+.daily-profit {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px; /* 和股票名字隔开一点 */
+  padding: 4px 12px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+}
+
 .stock-name-row { width: 100%; margin-bottom: 12px; }
 .stock-name { font-size: 16px; font-weight: 600; color: #fff; }
 
 .stock-info { 
-  display: flex; 
-  flex-direction: column; /* 纵向堆叠确保绝对居中 */
-  align-items: center; 
-  gap: 6px; 
-  margin-bottom: 15px;
+  display: flex; flex-direction: column; align-items: center; 
+  gap: 6px; margin-bottom: 15px; width: 100%;
 }
 
 .stock-price { font-size: 22px; font-weight: 800; }
 .stock-up { color: #ff5e5e; }
 .stock-down { color: #4ade80; }
-.stock-change { font-size: 14px; font-weight: 500; }
-.stock-detail { color: #bbb; font-size: 12px; }
+.stock-change { font-size: 14px; font-weight: 500; display: block; }
+.stock-detail { color: #bbb; font-size: 12px; display: block; margin-top: 4px; }
 
 .stock-chart { width: 100%; display: flex; justify-content: center; margin-top: 5px; border-radius: 10px; overflow: hidden; }
 .stock-chart img { width: 100%; height: auto; filter: invert(1) hue-rotate(180deg) brightness(1.1); }
 
 .site-footer { padding: 40px 0; }
 
-/* 响应式断点微调 */
-@media (max-width: 950px) { /* 降到 950px 才变两排 */
+/* 响应式 */
+@media (max-width: 1000px) {
   .stock-widget { width: calc(50% - 10px); }
 }
 
-@media (max-width: 600px) { /* 降到 600px 才变一排 */
+@media (max-width: 650px) {
   .stock-widget { width: 100%; }
   .index-card { flex: none; width: calc(50% - 10px); }
-  .avatar-image { max-width: 600px; width: 95%; } /* 手机端大头像 */
+  .avatar-image { max-width: 600px; width: 95%; }
 }
