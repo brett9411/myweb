@@ -15,7 +15,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 进一步拓宽容器，确保3列能并排 */
+/* 拓宽容器 */
 .container { width: 100%; max-width: 1500px; margin: 0 auto; padding: 0 15px; }
 
 /* 导航 */
@@ -53,82 +53,61 @@ body {
 .clock-date { font-family: monospace; font-size: 15px; color: #ccc; }
 .beijing-clock { font-family: monospace; font-size: clamp(30px, 6vw, 42px); letter-spacing: 4px; }
 
+/* --- 电脑端头像：保持原样 --- */
 .hero-avatar { margin-top: 10px; display: flex; justify-content: center; }
-.avatar-image { max-width: 300px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); }
-
-/* --- 强制三列布局逻辑 --- */
-.stocks-container {
-  display: flex;
-  flex-direction: row; 
-  flex-wrap: wrap;     
-  justify-content: flex-start; /* 改为左对齐，配合间距更稳定 */
-  gap: 20px;          
+.avatar-image { 
+  max-width: 300px; /* 电脑上还是 300 像素 */
   width: 100%;
-  margin: 50px auto 0;
-}
-
-.stock-widget {
-  /* 调整：减小一点宽度比例，确保在 1400px 下绝对能放下 3 个 */
-  width: calc(33.33% - 14px); 
-  min-width: 280px; /* 降低最小宽度门槛 */
-  padding: 20px; 
-  border-radius: 28px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  display: flex; 
-  flex-direction: column; 
-  align-items: center;
+  height: auto;
+  border-radius: 12px; 
+  border: 1px solid rgba(255, 255, 255, 0.2); 
   transition: transform 0.3s ease;
 }
 
-.stock-widget:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 255, 255, 0.2);
+/* 股票容器：三列布局 */
+.stocks-container {
+  display: flex; flex-direction: row; flex-wrap: wrap; 
+  justify-content: flex-start; gap: 20px; width: 100%; margin-top: 50px;
+}
+
+.stock-widget {
+  width: calc(33.33% - 14px); min-width: 280px; 
+  padding: 20px; border-radius: 28px;
+  background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center;
 }
 
 .stock-name { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #fff; }
-.stock-info { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin-bottom: 15px; }
+.stock-info { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 15px; }
 .stock-price { font-size: 20px; font-weight: 800; }
 .stock-up { color: #ff5e5e; }
 .stock-down { color: #4ade80; }
 .stock-detail { color: #bbb; font-size: 12px; }
 
-/* K 线图自适应 */
-.stock-chart { 
-  width: 100%; 
-  display: flex; 
-  justify-content: center; 
-  margin-top: 5px; 
-  border-radius: 10px; 
-  overflow: hidden; 
-}
-.stock-chart img { 
-  width: 100%; 
-  height: auto; 
-  filter: invert(1) hue-rotate(180deg) brightness(1.1); 
-}
+.stock-chart { width: 100%; display: flex; justify-content: center; margin-top: 5px; border-radius: 10px; overflow: hidden; }
+.stock-chart img { width: 100%; height: auto; filter: invert(1) hue-rotate(180deg) brightness(1.1); }
 
 .site-footer { padding: 40px 0; }
 
-/* --- 智能适配：只有在真正挤不下的时候才换行 --- */
+/* --- 响应式逻辑 --- */
 
-/* 屏幕小于 1000px 时，变回一排 2 个 */
+/* 中等屏幕：变 2 列 */
 @media (max-width: 1000px) {
-  .stock-widget {
-    width: calc(50% - 10px);
-  }
+  .stock-widget { width: calc(50% - 10px); }
 }
 
-/* 屏幕小于 650px 时，变回一排 1 个 */
+/* 手机端 (关键修改点) */
 @media (max-width: 650px) {
-  .stock-widget {
-    width: 100%;
+  .stock-widget { width: 100%; }
+  
+  /* 头像在手机上放大！填满屏幕宽度 */
+  .avatar-image { 
+    max-width: 600px; /* 设一个较大的值，让它在手机上占满 */
+    width: 95%;      /* 占据 95% 的屏幕宽度 */
+    border-radius: 20px; /* 变大了，圆角也稍微加深一点点好看 */
   }
-}
 
-@media (max-width: 480px) {
   .beijing-clock { font-size: 26px; letter-spacing: 1px; }
   .name-as-image { height: 60px; }
-  .avatar-image { max-width: 240px; }
+  .clock-dashboard { padding: 15px 25px; }
 }
