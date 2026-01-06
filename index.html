@@ -11,21 +11,16 @@
   <header class="site-header">
     <div class="container nav-container">
       <div class="header-left">
-        <div class="logo">我的个人橱窗</div>
-        <div class="visitor-badge" id="busuanzi_container_site_uv" style="display:none">
+        <!-- 修改点：标题改为链接形式，点击可返回顶部 -->
+        <a href="#home" class="logo">我的个人橱窗</a>
+        
+        <div class="visitor-badge" id="busuanzi_container_site_uv">
           <span class="v-icon">👥</span>
           <span class="v-text">访客:</span>
           <span class="v-num" id="busuanzi_value_site_uv">--</span>
         </div>
       </div>
-
-      <nav class="nav">
-        <a href="#home">首页</a>
-      </nav>
-      <button class="nav-toggle" aria-label="切换导航">
-        <span></span>
-        <span></span>
-      </button>
+      <!-- 删除了 nav 和 nav-toggle 按钮 -->
     </div>
   </header>
 
@@ -51,12 +46,8 @@
             <div class="index-loading">正在同步指数...</div>
           </div>
 
-          <!-- 模拟盘仪表盘 -->
           <div class="portfolio-dashboard" id="portfolioDashboard">
-            <!-- 新增：标题 -->
             <div class="portfolio-title">模拟盘</div>
-            
-            <!-- 数据行 -->
             <div class="portfolio-row">
               <div class="portfolio-item">
                 <div class="p-label">总资产 (元)</div>
@@ -82,13 +73,7 @@
   </footer>
 
   <script>
-    const navToggle = document.querySelector('.nav-toggle');
-    const nav = document.querySelector('.nav');
-    navToggle.addEventListener('click', () => {
-      nav.classList.toggle('nav-open');
-      navToggle.classList.toggle('nav-toggle-open');
-    });
-
+    // --- 1. 北京时间仪表盘逻辑 ---
     function updateClock() {
       const clockElement = document.getElementById('beijingClock');
       const dateElement = document.getElementById('clockDate');
@@ -111,6 +96,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // --- 2. 股票配置 ---
     const INDICES = [
       { code: 'sh000001', name: '上证指数' },
       { code: 'sz399006', name: '创业板指' },
@@ -127,11 +113,7 @@
       { code: 'sz159567', name: '159567 港股创新药ETF', holding: 0 }
     ];
 
-    STOCKS.sort((a, b) => {
-      const holdingA = a.holding || 0;
-      const holdingB = b.holding || 0;
-      return (holdingB > 0) - (holdingA > 0);
-    });
+    STOCKS.sort((a, b) => (b.holding > 0) - (a.holding > 0));
     
     function fetchStockData(stockCode) {
       return new Promise((resolve) => {
@@ -151,17 +133,7 @@
                   const price = currentPrice > 0 ? currentPrice : yesterdayClose;
                   const change = price - yesterdayClose;
                   const percent = yesterdayClose > 0 ? ((change / yesterdayClose) * 100).toFixed(2) : '0.00';
-                  resolve({
-                    code: stockCode,
-                    name: data[1],
-                    price: price.toFixed(3),
-                    change: change.toFixed(3),
-                    percent,
-                    isUp: change >= 0,
-                    open: parseFloat(data[5]).toFixed(2),
-                    high: parseFloat(data[33]).toFixed(2),
-                    low: parseFloat(data[34]).toFixed(2)
-                  });
+                  resolve({ code: stockCode, name: data[1], price: price.toFixed(3), change: change.toFixed(3), percent, isUp: change >= 0, open: parseFloat(data[5]).toFixed(2), high: parseFloat(data[33]).toFixed(2), low: parseFloat(data[34]).toFixed(2) });
                   return;
                 }
               }
@@ -182,14 +154,7 @@
         if (data) {
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
-          const indexPrice = parseFloat(data.price).toFixed(2);
-          const indexChange = parseFloat(data.change).toFixed(2);
-          html += `
-            <div class="index-card">
-              <div class="index-name">${data.name}</div>
-              <div class="index-price ${colorClass}">${indexPrice}</div>
-              <div class="index-change ${colorClass}">${sign}${indexChange} (${sign}${data.percent}%)</div>
-            </div>`;
+          html += `<div class="index-card"><div class="index-name">${data.name}</div><div class="index-price ${colorClass}">${parseFloat(data.price).toFixed(2)}</div><div class="index-change ${colorClass}">${sign}${parseFloat(data.change).toFixed(2)} (${sign}${data.percent}%)</div></div>`;
         }
       });
       container.innerHTML = html;
@@ -198,61 +163,35 @@
     async function renderStocks() {
       const container = document.getElementById('stocksContainer');
       const results = await Promise.all(STOCKS.map(s => fetchStockData(s.code)));
-      
       let html = '';
       let totalStockValue = 0;
       let totalDailyProfit = 0;
-
       results.forEach(data => {
         if (data) {
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
           const kLineUrl = `https://image.sinajs.cn/newchart/daily/n/${data.code}.gif`;
-          
           const stockConfig = STOCKS.find(s => s.code === data.code);
-          const displayName = stockConfig ? stockConfig.name : data.name;
           const holding = stockConfig ? (stockConfig.holding || 0) : 0;
-          
           let profitHtml = '';
           if (holding > 0) {
             const dailyProfit = parseFloat(data.change) * holding;
-            const profitSign = dailyProfit >= 0 ? '+' : '';
             totalDailyProfit += dailyProfit;
             totalStockValue += parseFloat(data.price) * holding;
-            profitHtml = `<div class="daily-profit ${colorClass}">今日盈亏: ${profitSign}${dailyProfit.toFixed(2)}</div>`;
+            profitHtml = `<div class="daily-profit ${colorClass}">今日盈亏: ${dailyProfit >= 0 ? '+' : ''}${dailyProfit.toFixed(2)}</div>`;
           }
-
-          html += `<div class="stock-widget">
-            ${profitHtml}
-            <div class="stock-name-row"><span class="stock-name">📈 ${displayName}</span></div>
-            <div class="stock-info">
-              <span class="stock-price ${colorClass}">${parseFloat(data.price).toFixed(3)}</span>
-              <span class="stock-change ${colorClass}">${sign}${parseFloat(data.change).toFixed(3)} (${sign}${data.percent}%)</span>
-              <span class="stock-detail">今开${data.open} | 高${data.high} | 低${data.low}</span>
-            </div>
-            <div class="stock-chart"><img src="${kLineUrl}" alt="Chart" /></div>
-          </div>`;
+          html += `<div class="stock-widget">${profitHtml}<div class="stock-name-row"><span class="stock-name">📈 ${stockConfig.name}</span></div><div class="stock-info"><span class="stock-price ${colorClass}">${data.price}</span><span class="stock-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</span><span class="stock-detail">今开${data.open} | 高${data.high} | 低${data.low}</span></div><div class="stock-chart"><img src="${kLineUrl}" alt="Chart" /></div></div>`;
         }
       });
-      
       container.innerHTML = html;
-
       const finalAssets = totalStockValue + CASH;
-      const assetsEl = document.getElementById('totalAssets');
+      document.getElementById('totalAssets').textContent = finalAssets.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const profitEl = document.getElementById('totalProfit');
-      assetsEl.textContent = finalAssets.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      
-      const profitSign = totalDailyProfit >= 0 ? '+' : '';
-      const profitColor = totalDailyProfit >= 0 ? '#ff5e5e' : '#4ade80';
-      profitEl.textContent = `${profitSign}${totalDailyProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      profitEl.style.color = profitColor;
+      profitEl.textContent = `${totalDailyProfit >= 0 ? '+' : ''}${totalDailyProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      profitEl.style.color = totalDailyProfit >= 0 ? '#ff5e5e' : '#4ade80';
     }
 
-    function refreshAll() {
-      renderIndices();
-      renderStocks();
-    }
-
+    function refreshAll() { renderIndices(); renderStocks(); }
     refreshAll();
     setInterval(refreshAll, 10000); 
   </script>
