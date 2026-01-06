@@ -38,12 +38,24 @@
             <img src="1767246246813.jpg" alt="Profile" class="avatar-image" />
           </div>
 
-          <!-- 大盘指数行 -->
+          <!-- 大盘指数 -->
           <div class="indices-container" id="indicesContainer">
-            <div class="index-loading">正在同步指数数据...</div>
+            <div class="index-loading">正在同步指数...</div>
           </div>
 
-          <!-- 个股/ETF 容器 -->
+          <!-- 新增：个人资产仪表盘 -->
+          <div class="portfolio-dashboard" id="portfolioDashboard">
+            <div class="portfolio-item">
+              <div class="p-label">总资产 (元)</div>
+              <div class="p-value" id="totalAssets">计算中...</div>
+            </div>
+            <div class="portfolio-item">
+              <div class="p-label">当日盈亏 (元)</div>
+              <div class="p-value" id="totalProfit">--</div>
+            </div>
+          </div>
+
+          <!-- 股票容器 -->
           <div class="stocks-container" id="stocksContainer">
             <div class="stock-loading">正在同步行情数据...</div>
           </div>
@@ -86,15 +98,20 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 指数配置
     const INDICES = [
       { code: 'sh000001', name: '上证指数' },
       { code: 'sz399006', name: '创业板指' },
       { code: 'sh000688', name: '科创50' }
     ];
 
-    // --- 股票配置 (在此处修改持仓数量) ---
-    // holding: 持股数量 (股)
+    // --- 在这里修改持仓和现金 ---
+    
+    // 1. 设置你的剩余现金（或者是理财、未投入股市的钱）
+    // 为了凑成你想要的 1433358.72，我大概算了一下，你的股票市值约 110万，所以现金填了 328000
+    // 如果你想总数精确等于某个值，你可以微调这个数字
+    const CASH = 328681.72; 
+
+    // 2. 股票配置与持仓
     const STOCKS = [
       { code: 'sz159898', name: '159898 医疗器械ETF', holding: 0 },
       { code: 'sh601288', name: '601288 农业银行', holding: 44200 },
@@ -103,6 +120,14 @@
       { code: 'sh513050', name: '513050 中概互联ETF', holding: 0 },
       { code: 'sz159567', name: '159567 港股创新药ETF', holding: 0 }
     ];
+
+    // --- 自动排序逻辑：有持仓的排前面 ---
+    // holding > 0 的排在 holding == 0 的前面
+    STOCKS.sort((a, b) => {
+      const holdingA = a.holding || 0;
+      const holdingB = b.holding || 0;
+      return (holdingB > 0) - (holdingA > 0);
+    });
     
     function fetchStockData(stockCode) {
       return new Promise((resolve) => {
@@ -125,7 +150,7 @@
                   resolve({
                     code: stockCode,
                     name: data[1],
-                    price: price.toFixed(2), // 修正为3位小数以匹配ETF精度? 这里先用2位，如需3位可改
+                    price: price.toFixed(3), // 这里的3位小数更准
                     change: change.toFixed(3),
                     percent,
                     isUp: change >= 0,
@@ -153,11 +178,14 @@
         if (data) {
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
+          // 指数价格通常保留2位
+          const indexPrice = parseFloat(data.price).toFixed(2);
+          const indexChange = parseFloat(data.change).toFixed(2);
           html += `
             <div class="index-card">
               <div class="index-name">${data.name}</div>
-              <div class="index-price ${colorClass}">${data.price}</div>
-              <div class="index-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</div>
+              <div class="index-price ${colorClass}">${indexPrice}</div>
+              <div class="index-change ${colorClass}">${sign}${indexChange} (${sign}${data.percent}%)</div>
             </div>`;
         }
       });
@@ -167,41 +195,65 @@
     async function renderStocks() {
       const container = document.getElementById('stocksContainer');
       const results = await Promise.all(STOCKS.map(s => fetchStockData(s.code)));
+      
       let html = '';
+      let totalStockValue = 0; // 股票总市值
+      let totalDailyProfit = 0; // 当日总盈亏
+
       results.forEach(data => {
         if (data) {
           const colorClass = data.isUp ? 'stock-up' : 'stock-down';
           const sign = data.isUp ? '+' : '';
           const kLineUrl = `https://image.sinajs.cn/newchart/daily/n/${data.code}.gif`;
           
-          // 获取配置中的持仓信息
           const stockConfig = STOCKS.find(s => s.code === data.code);
           const displayName = stockConfig ? stockConfig.name : data.name;
           const holding = stockConfig ? (stockConfig.holding || 0) : 0;
           
-          // 计算今日持仓盈亏
           let profitHtml = '';
           if (holding > 0) {
-            const dailyProfit = (parseFloat(data.change) * holding).toFixed(2);
+            // 计算单只股票盈亏
+            const dailyProfit = parseFloat(data.change) * holding;
             const profitSign = dailyProfit >= 0 ? '+' : '';
-            // 盈亏文字颜色跟随涨跌颜色
-            profitHtml = `<div class="daily-profit ${colorClass}">今日盈亏: ${profitSign}${dailyProfit}</div>`;
+            // 累加总盈亏
+            totalDailyProfit += dailyProfit;
+            // 累加总市值
+            totalStockValue += parseFloat(data.price) * holding;
+
+            // 显示格式化后的单只盈亏
+            profitHtml = `<div class="daily-profit ${colorClass}">今日盈亏: ${profitSign}${dailyProfit.toFixed(2)}</div>`;
           }
 
           html += `<div class="stock-widget">
-            <!-- 这里插入盈亏信息，位于名字上方 -->
             ${profitHtml}
             <div class="stock-name-row"><span class="stock-name">📈 ${displayName}</span></div>
             <div class="stock-info">
-              <span class="stock-price ${colorClass}">${data.price}</span>
-              <span class="stock-change ${colorClass}">${sign}${data.change} (${sign}${data.percent}%)</span>
+              <span class="stock-price ${colorClass}">${parseFloat(data.price).toFixed(3)}</span>
+              <span class="stock-change ${colorClass}">${sign}${parseFloat(data.change).toFixed(3)} (${sign}${data.percent}%)</span>
               <span class="stock-detail">今开${data.open} | 高${data.high} | 低${data.low}</span>
             </div>
             <div class="stock-chart"><img src="${kLineUrl}" alt="Chart" /></div>
           </div>`;
         }
       });
+      
       container.innerHTML = html;
+
+      // --- 更新顶部的总资产面板 ---
+      // 总资产 = 股票总市值 + 现金
+      const finalAssets = totalStockValue + CASH;
+      
+      const assetsEl = document.getElementById('totalAssets');
+      const profitEl = document.getElementById('totalProfit');
+      
+      // 数字格式化（加逗号）
+      assetsEl.textContent = finalAssets.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      
+      const profitSign = totalDailyProfit >= 0 ? '+' : '';
+      const profitColor = totalDailyProfit >= 0 ? '#ff5e5e' : '#4ade80';
+      
+      profitEl.textContent = `${profitSign}${totalDailyProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      profitEl.style.color = profitColor;
     }
 
     function refreshAll() {
