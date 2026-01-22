@@ -9,7 +9,7 @@
   <!-- 不蒜子计数器 -->
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
   
-  <!-- 51.LA 统计代码 (新增) -->
+  <!-- 51.LA 统计代码 -->
   <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
   <script>LA.init({id:"3OczjHQPf1r1RL66",ck:"3OczjHQPf1r1RL66"})</script>
 </head>
@@ -17,9 +17,7 @@
   <header class="site-header">
     <div class="container nav-container">
       <div class="header-left">
-        <!-- Logo 点击刷新 -->
         <a href="javascript:location.reload()" class="logo">我的个人橱窗</a>
-        
         <div class="visitor-badge" id="busuanzi_container_site_uv">
           <span class="v-icon">👥</span>
           <span class="v-text">访客:</span>
@@ -34,7 +32,6 @@
       <div class="container hero-content">
         <div class="hero-text">
           
-          <!-- 中文地址显示 -->
           <div class="top-location" id="visitorLocation">
             <span class="l-icon">📍</span>
             <span id="cityText">正在定位...</span>
@@ -85,7 +82,7 @@
   </footer>
 
   <script>
-    // --- 1. 获取中文地理位置逻辑 ---
+    // --- 1. 定位逻辑 ---
     async function fetchLocation() {
       const cityText = document.getElementById('cityText');
       try {
@@ -127,14 +124,22 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // --- 3. 股票逻辑 ---
+    // --- 3. 股票与资产配置 ---
+    
+    // 指数列表
     const INDICES = [
       { code: 'sh000001', name: '上证指数' },
       { code: 'sz399006', name: '创业板指' },
       { code: 'sh000688', name: '科创50' }
     ];
-    const CASH = 328681.72; 
+
+    // 现金余额 (已根据你的新总资产目标 1359821 进行了粗略倒推调整)
+    // 如果网页显示的总资产不对，请微调这个数字
+    const CASH = 1300.00; 
+
+    // 个股列表 (新增隆基绿能)
     const STOCKS = [
+      { code: 'sh601012', name: '601012 隆基绿能', holding: 17100 }, // 新增
       { code: 'sz159898', name: '159898 医疗器械ETF', holding: 0 },
       { code: 'sh601288', name: '601288 农业银行', holding: 44200 },
       { code: 'sh601919', name: '601919 中远海控', holding: 30300 },
@@ -142,8 +147,11 @@
       { code: 'sh513050', name: '513050 中概互联ETF', holding: 0 },
       { code: 'sz159567', name: '159567 港股创新药ETF', holding: 0 }
     ];
+
+    // 自动排序：有持仓的排前面
     STOCKS.sort((a, b) => (b.holding > 0) - (a.holding > 0));
     
+    // 获取数据逻辑
     function fetchStockData(stockCode) {
       return new Promise((resolve) => {
         const varName = `v_${stockCode}`;
@@ -175,6 +183,7 @@
       });
     }
     
+    // 渲染指数
     async function renderIndices() {
       const container = document.getElementById('indicesContainer');
       const results = await Promise.all(INDICES.map(s => fetchStockData(s.code)));
@@ -189,6 +198,7 @@
       container.innerHTML = html;
     }
 
+    // 渲染股票与资产
     async function renderStocks() {
       const container = document.getElementById('stocksContainer');
       const results = await Promise.all(STOCKS.map(s => fetchStockData(s.code)));
@@ -213,10 +223,15 @@
         }
       });
       container.innerHTML = html;
+      
+      // 更新资产
       const finalAssets = totalStockValue + CASH;
       document.getElementById('totalAssets').textContent = finalAssets.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      
+      // 更新盈亏
       const profitEl = document.getElementById('totalProfit');
-      profitEl.textContent = `${totalDailyProfit >= 0 ? '+' : ''}${totalDailyProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      const profitSign = totalDailyProfit >= 0 ? '+' : '';
+      profitEl.textContent = `${profitSign}${totalDailyProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       profitEl.style.color = totalDailyProfit >= 0 ? '#ff5e5e' : '#4ade80';
     }
 
